@@ -51,7 +51,7 @@ function UserProfile({ updateUser, applications, unapplyFromJob }) {
     }
 
     return (
-        <Container className="blurry-background mt-5" style={{ maxWidth: '800px'}}>
+        <Container className="blurry-background mt-5" style={{ maxWidth: '900px'}}>
             <h3>Edit Profile</h3>
             <Form onSubmit={handleSubmit}>
                 
