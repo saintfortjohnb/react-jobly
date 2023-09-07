@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Form, FormGroup, Label, Input, Container } from 'reactstrap';
+import LoadingSpinner from '../hooks/LoadingSpinner';
 
 const SignupForm = ({ signup }) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ username: '', password: '', email: '', firstName: '', lastName: '' });
+  const [isLoading, setIsLoading] = useState(false); // Added isLoading state
 
   const handleSubmit = async e => {
     e.preventDefault();
+    setIsLoading(true); 
     try {
       const token = await signup(formData); 
       if (token) {
@@ -15,6 +18,8 @@ const SignupForm = ({ signup }) => {
       }
     } catch (e) {
       console.error(e);
+    } finally {
+      setIsLoading(false); 
     }
   };
 
@@ -22,6 +27,10 @@ const SignupForm = ({ signup }) => {
     const { name, value } = e.target;
     setFormData(data => ({ ...data, [name]: value }));
   };
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <Container className="blurry-background" style={{ maxWidth: '400px', marginTop: '50px' }}>

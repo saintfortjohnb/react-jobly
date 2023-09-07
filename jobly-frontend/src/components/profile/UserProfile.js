@@ -4,6 +4,7 @@ import JoblyApi from '../api/api';
 import UserContext from '../hooks/UserContext';
 import { Button, Form, FormGroup, Label, Input, Container } from 'reactstrap';
 import UserApplications from './UserApplications';
+import LoadingSpinner from '../hooks/LoadingSpinner';
 
 function UserProfile({ updateUser, applications, unapplyFromJob }) {
     const currentUser = useContext(UserContext);
@@ -13,7 +14,8 @@ function UserProfile({ updateUser, applications, unapplyFromJob }) {
         lastName: currentUser.lastName,
         email: currentUser.email
     });
-    
+    const [isLoading, setIsLoading] = useState(false); // Added isLoading state
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((fData) => ({
@@ -24,12 +26,15 @@ function UserProfile({ updateUser, applications, unapplyFromJob }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
         try {
             const updatedUser = await JoblyApi.saveProfile(currentUser.username, formData);
             updateUser(updatedUser, JoblyApi.token);
             navigate('/');
         } catch (errors) {
             console.error("Failed to update profile:", errors);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -39,7 +44,11 @@ function UserProfile({ updateUser, applications, unapplyFromJob }) {
             lastName: currentUser.lastName || '',
             email: currentUser.email || ''
         });
-    }, [currentUser]);    
+    }, [currentUser]);  
+
+    if (isLoading) {
+        return <LoadingSpinner />;
+    }
 
     return (
         <Container className="blurry-background mt-5" style={{ maxWidth: '800px'}}>
@@ -83,6 +92,5 @@ function UserProfile({ updateUser, applications, unapplyFromJob }) {
         </Container>
     );
 }
-
 
 export default UserProfile;
