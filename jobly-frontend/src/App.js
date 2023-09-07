@@ -38,20 +38,33 @@ function App() {
   }, [token]);  
 
   const login = async (credentials) => {
-    const token = await JoblyApi.login(credentials);
-    setToken(token);
-    return token;
+    setIsLoading(true);
+    try {
+      const token = await JoblyApi.login(credentials);
+      setToken(token);
+      return token;
+    } finally {
+      setIsLoading(false);}
   };
 
   const signup = async (data) => {
-    const token = await JoblyApi.signup(data);
-    setToken(token);
-    return token;
+    setIsLoading(true);
+    try {
+      const token = await JoblyApi.signup(data);
+      setToken(token);
+      return token;
+    } finally {
+      setIsLoading(false);}
   };
 
   const logout = () => {
-    setCurrentUser(null);
-    setToken(null);
+    setIsLoading(true);
+    try{
+      setCurrentUser(null);
+      setToken(null);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const applyToJob = async (id) => {
@@ -89,8 +102,8 @@ function App() {
   return (
     <Router>
       <UserContext.Provider value={currentUser}>
-      <NavBar logout={logout} />
-      <Routes>
+      <NavBar logout={logout} isLoading={isLoading} />
+      <Routes >
         {/* Public routes */}
         <Route path="/login" element={<PublicRoute><LoginForm login={login} /></PublicRoute>} />
         <Route path="/signup" element={<PublicRoute><SignupForm signup={signup} /></PublicRoute>} />
